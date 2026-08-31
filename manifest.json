@@ -1,0 +1,61 @@
+{
+  "manifest_version": 3,
+  "name": "Kill Tabs",
+  "version": "1.0.0",
+  "description": "Suspende abas ociosas para liberar RAM e arquiva as antigas num cofre, preservando grupos de abas.",
+  "minimum_chrome_version": "121",
+  "permissions": [
+    "tabs",
+    "tabGroups",
+    "storage",
+    "unlimitedStorage",
+    "alarms",
+    "scripting"
+  ],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "src/background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "src/popup/popup.html",
+    "default_title": "Kill Tabs",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "options_page": "src/options/options.html",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "commands": {
+    "_execute_action": {
+      "suggested_key": { "default": "Alt+Shift+K" },
+      "description": "Abrir o popup do Kill Tabs"
+    },
+    "suspend-others": {
+      "suggested_key": { "default": "Alt+Shift+O" },
+      "description": "Suspender todas as abas menos a atual"
+    },
+    "suspend-current": {
+      "suggested_key": { "default": "Alt+Shift+S" },
+      "description": "Suspender a aba atual"
+    },
+    "archive-group": {
+      "suggested_key": { "default": "Alt+Shift+A" },
+      "description": "Arquivar o grupo da aba atual no cofre"
+    },
+    "suspend-window": {
+      "description": "Suspender esta janela"
+    },
+    "open-dashboard": {
+      "description": "Abrir o dashboard / cofre"
+    }
+  }
+}

@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <title>Kill Tabs — Cofre</title>
+    <link rel="stylesheet" href="../shared.css" />
+    <link rel="stylesheet" href="dashboard.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">Kill Tabs</div>
+      <nav class="tabs">
+        <button id="nav-open" class="nav active">Abertas</button>
+        <button id="nav-vault" class="nav">Cofre</button>
+      </nav>
+      <div class="spacer"></div>
+      <input id="search" type="search" placeholder="Buscar por título, URL ou grupo…" />
+      <button id="sweep" title="Rodar a varredura agora">Varrer agora</button>
+      <button id="options" class="ghost" title="Configurações">⚙</button>
+    </header>
+
+    <section class="stats">
+      <div class="stat"><b id="s-tabs">–</b><span>abas abertas</span></div>
+      <div class="stat"><b id="s-discarded">–</b><span>suspensas agora</span></div>
+      <div class="stat"><b id="s-groups">–</b><span>grupos ativos</span></div>
+      <div class="stat"><b id="s-vault">–</b><span>itens no cofre</span></div>
+      <div class="stat"><b id="s-saved">–</b><span>RAM estimada livre</span></div>
+      <div class="stat"><b id="s-archived">–</b><span>arquivadas no total</span></div>
+    </section>
+
+    <div class="toolbar">
+      <label class="check"><input type="checkbox" id="sel-all" /> Selecionar tudo visível</label>
+      <span id="sel-count" class="pill">0 selecionadas</span>
+      <div class="spacer"></div>
+      <div id="bulk-open" class="bulk">
+        <button id="bulk-suspend">Suspender selecionadas</button>
+        <button id="bulk-archive" class="danger">Arquivar selecionadas</button>
+      </div>
+      <div id="bulk-vault" class="bulk hidden">
+        <label class="check"><input type="checkbox" id="restore-suspended" /> abrir já suspensa</label>
+        <label class="check"><input type="checkbox" id="restore-remove" /> remover do cofre ao abrir</label>
+        <button id="bulk-restore" class="primary">Restaurar selecionadas</button>
+        <button id="bulk-delete" class="danger">Excluir selecionadas</button>
+        <button id="export">Exportar JSON</button>
+        <button id="import-btn">Importar</button>
+        <input id="import-file" type="file" accept="application/json,.json" hidden />
+      </div>
+    </div>
+
+    <main id="content"></main>
+    <div id="toast" class="toast"></div>
+
+    <script type="module" src="dashboard.js"></script>
+  </body>
+</html>

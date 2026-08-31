@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <title>Kill Tabs — Configurações</title>
+    <link rel="stylesheet" href="../shared.css" />
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <h1>Kill Tabs</h1>
+        <p class="muted">Suspende abas ociosas para liberar RAM e arquiva as antigas num cofre, mantendo os grupos.</p>
+      </header>
+
+      <section class="card">
+        <h2>Suspensão</h2>
+        <label class="field">
+          <span>Suspender após <b id="idle-label"></b> sem uso</span>
+          <input type="range" id="idleMinutes" min="1" max="480" step="1" />
+        </label>
+        <label class="toggle">
+          <input type="checkbox" id="collapsedImmediate" />
+          <span>Suspender na hora ao colapsar um grupo de abas</span>
+        </label>
+        <label class="toggle">
+          <input type="checkbox" id="discardOnStartup" />
+          <span>Suspender tudo ao abrir o Chrome (menos a aba ativa)</span>
+        </label>
+        <label class="toggle">
+          <input type="checkbox" id="showBadge" />
+          <span>Mostrar contador de abas suspensas no ícone</span>
+        </label>
+      </section>
+
+      <section class="card">
+        <h2>Cofre</h2>
+        <label class="toggle">
+          <input type="checkbox" id="archiveEnabled" />
+          <span>Arquivar automaticamente abas paradas há muito tempo</span>
+        </label>
+        <label class="field">
+          <span>Arquivar após <b id="days-label"></b> sem uso</span>
+          <input type="range" id="archiveDays" min="1" max="180" step="1" />
+        </label>
+        <label class="toggle">
+          <input type="checkbox" id="maxTabsEnabled" />
+          <span>Arquivar as mais antigas quando passar de um limite de abas</span>
+        </label>
+        <label class="field inline">
+          <span>Limite de abas abertas</span>
+          <input type="number" id="maxTabs" min="10" max="2000" step="5" />
+        </label>
+        <label class="toggle">
+          <input type="checkbox" id="restoreSuspended" />
+          <span>Ao restaurar do cofre, abrir a aba já suspensa</span>
+        </label>
+      </section>
+
+      <section class="card">
+        <h2>Nunca suspender</h2>
+        <label class="toggle">
+          <input type="checkbox" id="protectPinned" />
+          <span>Abas fixadas</span>
+        </label>
+        <label class="toggle">
+          <input type="checkbox" id="protectAudible" />
+          <span>Abas tocando áudio ou vídeo</span>
+        </label>
+        <label class="toggle">
+          <input type="checkbox" id="protectForms" />
+          <span>Abas com formulário preenchido e não enviado</span>
+        </label>
+        <label class="toggle">
+          <input type="checkbox" id="protectGrouped" />
+          <span>Qualquer aba dentro de um grupo</span>
+        </label>
+        <label class="field">
+          <span>Whitelist — um por linha. Aceita <code>dominio.com</code>, <code>*.dominio.com</code>, trecho de URL ou <code>/regex/</code></span>
+          <textarea id="whitelist" spellcheck="false"></textarea>
+        </label>
+      </section>
+
+      <section class="card">
+        <h2>Avançado</h2>
+        <label class="field inline">
+          <span>RAM estimada por aba (MB) — só para a estatística do dashboard</span>
+          <input type="number" id="estimatedMbPerTab" min="10" max="500" step="5" />
+        </label>
+        <div class="actions">
+          <button id="shortcuts">Editar atalhos de teclado</button>
+          <button id="dashboard">Abrir dashboard</button>
+          <button id="reset" class="danger">Restaurar padrões</button>
+        </div>
+      </section>
+
+      <div id="status" class="status"></div>
+    </div>
+    <script type="module" src="options.js"></script>
+  </body>
+</html>

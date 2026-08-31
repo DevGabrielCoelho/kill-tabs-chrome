@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <title>Kill Tabs</title>
+    <link rel="stylesheet" href="../shared.css" />
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header>
+      <div class="brand">Kill Tabs</div>
+      <button id="settings" class="ghost" title="Configurações">⚙</button>
+    </header>
+
+    <section class="stats">
+      <div class="stat"><b id="s-tabs">–</b><span>abas</span></div>
+      <div class="stat"><b id="s-discarded">–</b><span>suspensas</span></div>
+      <div class="stat"><b id="s-vault">–</b><span>no cofre</span></div>
+      <div class="stat"><b id="s-saved">–</b><span>RAM est.</span></div>
+    </section>
+
+    <div id="group-box" class="group-box hidden">
+      <div class="row">
+        <span class="dot" id="group-dot"></span>
+        <span class="truncate" id="group-name"></span>
+        <span class="pill" id="group-count"></span>
+      </div>
+      <div class="btns">
+        <button id="suspend-group">Suspender grupo</button>
+        <button id="archive-group">Arquivar grupo</button>
+      </div>
+    </div>
+
+    <section class="actions">
+      <div class="label">Suspender <span class="muted">(fica na barra, libera RAM)</span></div>
+      <div class="grid">
+        <button id="suspend-current">Esta aba</button>
+        <button id="suspend-window">Esta janela</button>
+        <button id="suspend-others" class="primary">Todas menos a atual</button>
+      </div>
+
+      <div class="label">Arquivar no cofre <span class="muted">(sai da barra, RAM zero)</span></div>
+      <div class="grid">
+        <button id="archive-window">Esta janela</button>
+        <button id="archive-others" class="danger">Todas menos a atual</button>
+      </div>
+    </section>
+
+    <footer>
+      <button id="dashboard" class="primary wide">Abrir cofre / dashboard</button>
+      <div id="toast" class="toast"></div>
+    </footer>
+
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>
