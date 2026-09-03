@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Kill Tabs",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Suspende abas ociosas para liberar RAM e arquiva as antigas num cofre, preservando grupos de abas.",
   "minimum_chrome_version": "121",
   "permissions": [
@@ -10,7 +10,8 @@
     "storage",
     "unlimitedStorage",
     "alarms",
-    "scripting"
+    "scripting",
+    "contextMenus"
   ],
   "host_permissions": ["<all_urls>"],
   "background": {
@@ -56,6 +57,9 @@
     },
     "open-dashboard": {
       "description": "Abrir o dashboard / cofre"
+    },
+    "undo-last": {
+      "description": "Desfazer a última ação do Kill Tabs"
     }
   }
 }

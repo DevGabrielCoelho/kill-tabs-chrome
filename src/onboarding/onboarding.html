@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <title>Kill Tabs: comece por aqui</title>
+    <link rel="stylesheet" href="../shared.css" />
+    <link rel="stylesheet" href="onboarding.css" />
+  </head>
+  <body>
+    <main class="wrap">
+      <header class="head">
+        <div class="mark" aria-hidden="true">
+          <svg viewBox="0 0 16 16"><path d="M3 2.6h10v2.1L7.1 11.4H13v2.1H3v-2.1L8.9 4.7H3z"/></svg>
+        </div>
+        <span class="eyebrow">Kill Tabs</span>
+      </header>
+
+      <h1 class="display">Suas abas continuam ali.<br />A memória, não.</h1>
+
+      <p class="lede">
+        Você tem <b id="count" class="num">…</b> abas abertas agora. O Kill Tabs deixa
+        <b id="suspendable" class="num">…</b> delas suspensas: o título, o favicon e o grupo ficam na barra, o conteúdo
+        sai da RAM e volta sozinho quando você clicar.
+      </p>
+
+      <div class="cta">
+        <button id="go" class="primary big">Suspender essas abas agora</button>
+        <span id="estimate" class="mono"></span>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <span class="eyebrow">01 · suspender</span>
+          <p>
+            A aba fica na barra, sem consumir memória. Abas fixadas, com som tocando ou com formulário preenchido nunca
+            são tocadas.
+          </p>
+        </li>
+        <li>
+          <span class="eyebrow">02 · arquivar</span>
+          <p>
+            O que ficou parado 30 dias sai da barra e vai para o cofre, guardando o grupo. Restaurar recria o grupo
+            <em>cursos</em> com a cor certa mesmo que ele não exista mais.
+          </p>
+        </li>
+        <li>
+          <span class="eyebrow">03 · nada se perde</span>
+          <p>
+            As últimas 25 abas que você fechar ficam no histórico, prontas para voltar. E toda ação tem
+            <kbd>Ctrl</kbd> <kbd>Z</kbd>.
+          </p>
+        </li>
+      </ol>
+
+      <footer class="foot">
+        <button id="dashboard">Abrir o cofre</button>
+        <button id="options" class="quiet">Ajustar os tempos</button>
+      </footer>
+    </main>
+    <script type="module" src="onboarding.js"></script>
+  </body>
+</html>

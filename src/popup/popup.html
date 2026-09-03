@@ -7,48 +7,69 @@
     <link rel="stylesheet" href="popup.css" />
   </head>
   <body>
-    <header>
-      <div class="brand">Kill Tabs</div>
-      <button id="settings" class="ghost" title="Configurações">⚙</button>
+    <header class="head">
+      <div class="mark" aria-hidden="true">
+        <svg viewBox="0 0 16 16"><path d="M3 2.6h10v2.1L7.1 11.4H13v2.1H3v-2.1L8.9 4.7H3z"/></svg>
+      </div>
+      <div class="brand">
+        <strong>Kill Tabs</strong>
+        <span class="mono" id="head-sub">lendo suas abas…</span>
+      </div>
+      <div class="spacer"></div>
+      <button id="settings" class="icon quiet" data-tip="Configurações" aria-label="Configurações">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 4.6h4.2M9.4 4.6H14M2 11.4h2.6M7.8 11.4H14"/><circle cx="7.8" cy="4.6" r="1.7"/><circle cx="6.2" cy="11.4" r="1.7"/></svg>
+      </button>
     </header>
 
-    <section class="stats">
-      <div class="stat"><b id="s-tabs">–</b><span>abas</span></div>
-      <div class="stat"><b id="s-discarded">–</b><span>suspensas</span></div>
-      <div class="stat"><b id="s-vault">–</b><span>no cofre</span></div>
-      <div class="stat"><b id="s-saved">–</b><span>RAM est.</span></div>
+    <section class="hero">
+      <div class="figure-num num" id="s-saved">-</div>
+      <div class="figure-sub" id="s-saved-sub"></div>
+      <div class="keys">
+        <span class="key"><i class="swatch s1"></i><b class="num" id="s-discarded">-</b> suspensas</span>
+        <span class="key"><i class="swatch s2"></i><b class="num" id="s-loaded">-</b> carregadas</span>
+        <span class="key"><i class="swatch s3"></i><b class="num" id="s-protected">-</b> protegidas</span>
+      </div>
+      <div class="matrix" id="matrix" role="img" aria-label="Uma marca por aba aberta"></div>
     </section>
 
     <div id="group-box" class="group-box hidden">
       <div class="row">
         <span class="dot" id="group-dot"></span>
         <span class="truncate" id="group-name"></span>
-        <span class="pill" id="group-count"></span>
+        <span class="chip" id="group-count"></span>
       </div>
-      <div class="btns">
-        <button id="suspend-group">Suspender grupo</button>
-        <button id="archive-group">Arquivar grupo</button>
+      <div class="pair">
+        <button id="suspend-group" class="tiny">Suspender grupo</button>
+        <button id="archive-group" class="tiny warn">Arquivar grupo</button>
       </div>
     </div>
 
-    <section class="actions">
-      <div class="label">Suspender <span class="muted">(fica na barra, libera RAM)</span></div>
+    <section class="block">
+      <div class="eyebrow">Liberar RAM <span class="hint">a aba fica na barra</span></div>
       <div class="grid">
         <button id="suspend-current">Esta aba</button>
         <button id="suspend-window">Esta janela</button>
         <button id="suspend-others" class="primary">Todas menos a atual</button>
       </div>
+    </section>
 
-      <div class="label">Arquivar no cofre <span class="muted">(sai da barra, RAM zero)</span></div>
+    <section class="block">
+      <div class="eyebrow">Guardar no cofre <span class="hint">fecha a aba, mantém o grupo</span></div>
       <div class="grid">
-        <button id="archive-window">Esta janela</button>
-        <button id="archive-others" class="danger">Todas menos a atual</button>
+        <button id="archive-window" class="warn">Esta janela</button>
+        <button id="archive-others" class="warn">Todas menos a atual</button>
       </div>
     </section>
 
     <footer>
-      <button id="dashboard" class="primary wide">Abrir cofre / dashboard</button>
-      <div id="toast" class="toast"></div>
+      <button id="dashboard" class="wide">
+        <span>Cofre e histórico</span>
+        <kbd id="kbd-dash">Alt+Shift+K</kbd>
+      </button>
+      <div class="foot-line">
+        <span id="foot-note" class="mono"></span>
+        <button id="undo" class="quiet tiny hidden">Desfazer</button>
+      </div>
     </footer>
 
     <script type="module" src="popup.js"></script>
