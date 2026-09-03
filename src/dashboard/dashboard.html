@@ -2,53 +2,150 @@
 <html lang="pt-BR">
   <head>
     <meta charset="utf-8" />
-    <title>Kill Tabs — Cofre</title>
+    <title>Kill Tabs</title>
     <link rel="stylesheet" href="../shared.css" />
     <link rel="stylesheet" href="dashboard.css" />
   </head>
   <body>
-    <header class="topbar">
-      <div class="brand">Kill Tabs</div>
-      <nav class="tabs">
-        <button id="nav-open" class="nav active">Abertas</button>
-        <button id="nav-vault" class="nav">Cofre</button>
-      </nav>
-      <div class="spacer"></div>
-      <input id="search" type="search" placeholder="Buscar por título, URL ou grupo…" />
-      <button id="sweep" title="Rodar a varredura agora">Varrer agora</button>
-      <button id="options" class="ghost" title="Configurações">⚙</button>
-    </header>
+    <div class="app">
+      <aside class="rail">
+        <div class="mark" aria-hidden="true">
+          <svg viewBox="0 0 16 16"><path d="M3 2.6h10v2.1L7.1 11.4H13v2.1H3v-2.1L8.9 4.7H3z"/></svg>
+        </div>
+        <nav class="rail-nav" aria-label="Seções">
+          <button id="nav-open" class="icon rail-btn active" data-tip="Abas abertas: 1" aria-label="Abas abertas">
+            <svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.6" y="3.4" width="12.8" height="9.4" rx="1.6"/><path d="M1.6 6.1h12.8"/><path d="M5.5 3.5v2.6"/></svg>
+          </button>
+          <button id="nav-vault" class="icon rail-btn" data-tip="Cofre: 2" aria-label="Cofre">
+            <svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="4.6" width="12" height="8.2" rx="1.6"/><path d="M1.3 4.6 3 2.3h10l1.7 2.3"/><path d="M6.4 7.9h3.2"/></svg>
+          </button>
+          <button id="nav-recent" class="icon rail-btn" data-tip="Últimas fechadas: 3" aria-label="Últimas fechadas">
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 8a5.5 5.5 0 1 1-1.9-4.2"/><path d="M13.6 2v3.1h-3.1"/><path d="M8 5.2V8l2.1 1.3"/></svg>
+          </button>
+        </nav>
+        <div class="spacer"></div>
+        <button id="palette" class="icon rail-btn" data-tip="Comandos: Ctrl+K" aria-label="Comandos">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.4 5.6 6 8l-2.6 2.4"/><path d="M7.6 10.6h5"/></svg>
+        </button>
+        <button id="sweep" class="icon rail-btn" data-tip="Varrer agora" aria-label="Varrer agora">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 8a5.5 5.5 0 1 1-1.9-4.2"/><path d="M13.6 2v3.1h-3.1"/></svg>
+        </button>
+        <button id="options" class="icon rail-btn" data-tip="Configurações" aria-label="Configurações">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 4.6h4.2M9.4 4.6H14M2 11.4h2.6M7.8 11.4H14"/><circle cx="7.8" cy="4.6" r="1.7"/><circle cx="6.2" cy="11.4" r="1.7"/></svg>
+        </button>
+      </aside>
 
-    <section class="stats">
-      <div class="stat"><b id="s-tabs">–</b><span>abas abertas</span></div>
-      <div class="stat"><b id="s-discarded">–</b><span>suspensas agora</span></div>
-      <div class="stat"><b id="s-groups">–</b><span>grupos ativos</span></div>
-      <div class="stat"><b id="s-vault">–</b><span>itens no cofre</span></div>
-      <div class="stat"><b id="s-saved">–</b><span>RAM estimada livre</span></div>
-      <div class="stat"><b id="s-archived">–</b><span>arquivadas no total</span></div>
-    </section>
+      <main class="stage">
+        <header class="topbar">
+          <div class="seg" role="tablist" aria-label="Seções">
+            <button id="tab-open" class="seg-btn active" role="tab" aria-selected="true">Abertas</button>
+            <button id="tab-vault" class="seg-btn" role="tab" aria-selected="false">Cofre</button>
+            <button id="tab-recent" class="seg-btn" role="tab" aria-selected="false">Fechadas</button>
+          </div>
+          <label class="search">
+            <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.3"/><path d="M10.3 10.3 14 14"/></svg>
+            <input id="search" type="search" placeholder="Filtrar" aria-label="Filtrar por título, URL ou grupo" />
+            <span id="search-count" class="search-count mono"></span>
+          </label>
+          <div class="spacer"></div>
+          <button id="density" class="quiet tiny" data-tip="Alternar densidade da lista">Densidade</button>
+          <span id="pulse" class="pulse" data-tip="A varredura roda a cada minuto"><i></i>ativo</span>
+        </header>
 
-    <div class="toolbar">
-      <label class="check"><input type="checkbox" id="sel-all" /> Selecionar tudo visível</label>
-      <span id="sel-count" class="pill">0 selecionadas</span>
-      <div class="spacer"></div>
-      <div id="bulk-open" class="bulk">
-        <button id="bulk-suspend">Suspender selecionadas</button>
-        <button id="bulk-archive" class="danger">Arquivar selecionadas</button>
-      </div>
-      <div id="bulk-vault" class="bulk hidden">
-        <label class="check"><input type="checkbox" id="restore-suspended" /> abrir já suspensa</label>
-        <label class="check"><input type="checkbox" id="restore-remove" /> remover do cofre ao abrir</label>
-        <button id="bulk-restore" class="primary">Restaurar selecionadas</button>
-        <button id="bulk-delete" class="danger">Excluir selecionadas</button>
-        <button id="export">Exportar JSON</button>
-        <button id="import-btn">Importar</button>
-        <input id="import-file" type="file" accept="application/json,.json" hidden />
-      </div>
+        <section class="hero">
+          <div class="hero-text">
+            <h1 id="view-title" class="display">Abas abertas</h1>
+            <p id="view-lede" class="lede"></p>
+          </div>
+          <div class="hero-figure">
+            <div id="s-saved" class="figure-num num">-</div>
+            <div id="s-saved-sub" class="figure-sub"></div>
+          </div>
+        </section>
+
+        <div class="filters">
+          <label class="fpill" id="fpill-state"><span>Estado</span><select id="filter-state" aria-label="Filtrar por estado">
+            <option value="all">todas</option>
+            <option value="suspended">suspensas</option>
+            <option value="active">carregadas</option>
+            <option value="protected">protegidas</option>
+          </select></label>
+          <label class="fpill"><span>Ordem</span><select id="filter-order" aria-label="Ordenar">
+            <option value="natural">da barra</option>
+            <option value="recent">mais recentes</option>
+            <option value="stale">mais antigas</option>
+            <option value="title">título</option>
+          </select></label>
+          <div class="spacer"></div>
+          <div class="bulkbar">
+            <label class="check"><input type="checkbox" id="sel-all" /> tudo visível</label>
+            <span id="sel-count" class="chip">nada selecionado</span>
+            <div id="bulk-open" class="bulk">
+              <button id="bulk-suspend" class="tiny">Suspender <kbd>s</kbd></button>
+              <button id="bulk-archive" class="tiny warn">Arquivar <kbd>a</kbd></button>
+            </div>
+            <div id="bulk-vault" class="bulk hidden">
+              <label class="check"><input type="checkbox" id="restore-suspended" /> abrir suspensa</label>
+              <label class="check"><input type="checkbox" id="restore-remove" /> tirar do cofre</label>
+              <button id="bulk-restore" class="tiny primary">Restaurar</button>
+              <button id="bulk-delete" class="tiny warn">Excluir</button>
+              <button id="export" class="tiny">Exportar</button>
+              <button id="import-btn" class="tiny">Importar</button>
+              <input id="import-file" type="file" accept="application/json,.json" hidden />
+            </div>
+            <div id="bulk-recent" class="bulk hidden">
+              <label class="check"><input type="checkbox" id="recent-suspended" /> abrir suspensa</label>
+              <label class="check"><input type="checkbox" id="recent-keep" /> manter na lista</label>
+              <button id="bulk-reopen" class="tiny primary">Reabrir</button>
+              <button id="bulk-recent-archive" class="tiny">Pro cofre</button>
+              <button id="bulk-recent-delete" class="tiny warn">Excluir</button>
+              <button id="clear-recent" class="tiny warn">Limpar</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="work">
+        <section class="band">
+          <div class="figure-card">
+            <div class="figure-head"><span class="eyebrow">Estado da memória</span></div>
+            <div class="duo">
+              <div class="duo-item">
+                <span class="swatch s1"></span>
+                <b id="s-discarded" class="num">-</b>
+                <span>suspensas</span>
+              </div>
+              <div class="duo-item">
+                <span class="swatch s2"></span>
+                <b id="s-loaded" class="num">-</b>
+                <span>carregadas</span>
+              </div>
+              <div class="duo-item">
+                <span class="swatch s3"></span>
+                <b id="s-protected" class="num">-</b>
+                <span>protegidas</span>
+              </div>
+            </div>
+            <div class="matrix" id="matrix" role="img" aria-label="Uma marca por aba aberta"></div>
+            <div class="figure-foot">
+              <span id="s-vault-line" class="mono"></span>
+            </div>
+          </div>
+
+          <div class="figure-card">
+            <div class="figure-head">
+              <span class="eyebrow" id="bars-title">Grupos</span>
+              <div class="spacer"></div>
+              <span class="eyebrow" id="bars-total"></span>
+            </div>
+            <div class="bar-list" id="bars"></div>
+            <div class="legend" id="bars-legend"></div>
+          </div>
+        </section>
+
+        <div id="content" class="content" role="list"></div>
+        </div>
+      </main>
     </div>
-
-    <main id="content"></main>
-    <div id="toast" class="toast"></div>
 
     <script type="module" src="dashboard.js"></script>
   </body>

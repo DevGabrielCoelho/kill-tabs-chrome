@@ -94,3 +94,61 @@ export async function currentGroupKey(tab) {
   if (!g) return '';
   return groupKeyOf(g.title, g.color);
 }
+
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+
+export async function resolveWindow(windowId) {
+  if (windowId) return windowId;
+  const win = await chrome.windows.getLastFocused({ windowTypes: ['normal'] }).catch(() => null);
+  if (win) return win.id;
+  const created = await chrome.windows.create({ focused: true });
+  return created.id;
+}
+
+export async function discardWhenReady(tabId, attempts = 8) {
+  for (let i = 0; i < attempts; i++) {
+    await wait(400);
+    const tab = await chrome.tabs.get(tabId).catch(() => null);
+    if (!tab) return false;
+    if (tab.discarded) return true;
+    if (tab.active) return false;
+    try {
+      await chrome.tabs.discard(tabId);
+      return true;
+    } catch {
+      continue;
+    }
+  }
+  return false;
+}
+
+export async function openEntriesInGroups(entries, windowId, suspended) {
+  const byKey = new Map();
+  for (const entry of entries) {
+    const key = groupKeyOf(entry.groupTitle, entry.groupColor);
+    if (!byKey.has(key)) byKey.set(key, []);
+    byKey.get(key).push(entry);
+  }
+
+  const openedIds = [];
+  for (const [key, list] of byKey) {
+    const tabIds = [];
+    for (const entry of list) {
+      const tab = await chrome.tabs
+        .create({ url: entry.url, windowId, active: false, pinned: !!entry.pinned })
+        .catch(() => null);
+      if (!tab) continue;
+      tabIds.push(tab.id);
+      openedIds.push(tab.id);
+      entry.openedAt = Date.now();
+    }
+    if (key && tabIds.length) {
+      await attachToGroup(tabIds, windowId, list[0].groupTitle, list[0].groupColor);
+    }
+  }
+
+  if (suspended) {
+    for (const id of openedIds) await discardWhenReady(id);
+  }
+  return openedIds;
+}

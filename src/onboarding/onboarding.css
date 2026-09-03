@@ -1,0 +1,92 @@
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wrap {
+  max-width: 720px;
+  padding: 60px 26px 70px;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 42px;
+}
+
+h1.display {
+  font-size: clamp(40px, 6vw, 64px);
+  line-height: 0.96;
+}
+
+.lede {
+  margin: 24px 0 0;
+  font-size: var(--t-4);
+  line-height: 1.5;
+  color: var(--ink-2);
+  max-width: 44ch;
+}
+
+.lede b {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.cta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 32px 0 46px;
+}
+
+.big {
+  font-size: var(--t-3);
+  padding: 12px 20px;
+}
+
+.cta span {
+  color: var(--ink-3);
+  font-size: var(--t-1);
+}
+
+.steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+  box-shadow: inset 0 1px 0 var(--line-soft);
+  padding-top: 26px;
+}
+
+.steps p {
+  margin: 9px 0 0;
+  font-size: var(--t-2);
+  color: var(--ink-2);
+  line-height: 1.6;
+}
+
+.steps em {
+  font-style: normal;
+  font-family: var(--mono);
+  font-size: var(--t-1);
+  color: var(--ink);
+}
+
+.foot {
+  display: flex;
+  gap: 8px;
+  padding-top: 40px;
+}
+
+@media (max-width: 720px) {
+  .steps {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+}

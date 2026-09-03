@@ -12,12 +12,17 @@ export const DEFAULTS = {
   protectGrouped: false,
   whitelist: ['localhost', '127.0.0.1'],
   restoreSuspended: false,
+  recentLimit: 25,
+  theme: 'system',
+  density: 'cozy',
   estimatedMbPerTab: 60,
   showBadge: true
 };
 
 const SETTINGS = 'settings';
 const VAULT = 'vault';
+const RECENT = 'recent';
+const UISTATE = 'ui-state';
 const SEEN = 'seen';
 const STATS = 'stats';
 
@@ -48,6 +53,26 @@ export async function saveVault(vault) {
   await chrome.storage.local.set({ [VAULT]: vault });
 }
 
+export async function getRecent() {
+  const r = await chrome.storage.local.get(RECENT);
+  return Array.isArray(r[RECENT]) ? r[RECENT] : [];
+}
+
+export async function saveRecent(list) {
+  await chrome.storage.local.set({ [RECENT]: list });
+}
+
+export async function getUiState() {
+  const r = await chrome.storage.local.get(UISTATE);
+  return r[UISTATE] || {};
+}
+
+export async function saveUiState(patch) {
+  const next = { ...(await getUiState()), ...patch };
+  await chrome.storage.local.set({ [UISTATE]: next });
+  return next;
+}
+
 export async function getSeen() {
   const r = await chrome.storage.local.get(SEEN);
   return r[SEEN] || {};
@@ -70,6 +95,31 @@ export async function bumpStats(patch) {
 }
 
 const ACT = 'act:';
+const META = 'meta:';
+
+export async function setMeta(tabId, meta) {
+  await chrome.storage.session.set({ [META + tabId]: meta });
+}
+
+export async function setMetaBulk(map) {
+  const patch = {};
+  for (const [tabId, meta] of Object.entries(map)) patch[META + tabId] = meta;
+  if (Object.keys(patch).length) await chrome.storage.session.set(patch);
+}
+
+export async function getTouch(tabId) {
+  const r = await chrome.storage.session.get(ACT + tabId);
+  return r[ACT + tabId] || null;
+}
+
+export async function getMeta(tabId) {
+  const r = await chrome.storage.session.get(META + tabId);
+  return r[META + tabId] || null;
+}
+
+export async function forgetMeta(tabId) {
+  await chrome.storage.session.remove(META + tabId);
+}
 
 export async function touch(tabId) {
   await chrome.storage.session.set({ [ACT + tabId]: Date.now() });

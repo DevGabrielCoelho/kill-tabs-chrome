@@ -67,23 +67,27 @@ export async function canDiscard(tab, settings) {
 
 export async function discardTabs(tabs, settings) {
   let count = 0;
+  const skipped = [];
   for (const tab of tabs) {
     const verdict = await canDiscard(tab, settings);
-    if (!verdict.ok) continue;
+    if (!verdict.ok) {
+      skipped.push({ id: tab.id, title: tab.title || tab.url, reason: verdict.reason });
+      continue;
+    }
     try {
       await chrome.tabs.discard(tab.id);
       count++;
     } catch {
-      continue;
+      skipped.push({ id: tab.id, title: tab.title || tab.url, reason: 'o Chrome recusou o discard' });
     }
   }
-  return count;
+  return { count, skipped };
 }
 
 export async function discardIgnoringActive(tabs, settings) {
   const active = tabs.filter((t) => t.active);
   const rest = tabs.filter((t) => !t.active);
-  let count = await discardTabs(rest, settings);
+  let count = (await discardTabs(rest, settings)).count;
   for (const tab of active) {
     const moved = await stepAsideAndDiscard(tab, settings);
     if (moved) count++;

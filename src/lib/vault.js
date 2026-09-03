@@ -1,8 +1,7 @@
 import { getVault, saveVault, bumpStats } from './store.js';
-import { captureGroup, attachToGroup } from './groups.js';
+import { captureGroup, openEntriesInGroups, resolveWindow } from './groups.js';
+import { markExpected } from './recent.js';
 import { groupKeyOf, splitGroupKey, urlKey, newId, isBlockedUrl } from './util.js';
-
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 export async function archiveTabs(tabs, lastSeenMap) {
   const archivable = [];
@@ -66,6 +65,7 @@ export async function archiveTabs(tabs, lastSeenMap) {
   await saveVault(vault);
 
   const ids = archivable.map((t) => t.id);
+  await markExpected(ids);
   try {
     await chrome.tabs.remove(ids);
   } catch {
@@ -76,56 +76,16 @@ export async function archiveTabs(tabs, lastSeenMap) {
   return { archived: created.length, entries: created };
 }
 
-async function discardWhenReady(tabId, attempts = 8) {
-  for (let i = 0; i < attempts; i++) {
-    await sleep(400);
-    const tab = await chrome.tabs.get(tabId).catch(() => null);
-    if (!tab) return false;
-    if (tab.discarded) return true;
-    if (tab.active) return false;
-    try {
-      await chrome.tabs.discard(tabId);
-      return true;
-    } catch {
-      continue;
-    }
-  }
-  return false;
-}
-
 export async function restoreEntries(entryIds, options = {}) {
   const vault = await getVault();
   const wanted = vault.entries.filter((e) => entryIds.includes(e.id));
   if (!wanted.length) return { opened: 0 };
 
-  let windowId = options.windowId;
-  if (!windowId) {
-    const win = await chrome.windows.getLastFocused({ windowTypes: ['normal'] }).catch(() => null);
-    windowId = win ? win.id : (await chrome.windows.create({ focused: true })).id;
-  }
-
-  const byKey = new Map();
-  for (const e of wanted) {
-    const key = groupKeyOf(e.groupTitle, e.groupColor);
-    const list = byKey.get(key) || [];
-    list.push(e);
-    byKey.set(key, list);
-  }
-
-  const openedIds = [];
-  for (const [key, list] of byKey) {
-    const tabIds = [];
-    for (const e of list) {
-      const tab = await chrome.tabs.create({ url: e.url, windowId, active: false, pinned: !!e.pinned }).catch(() => null);
-      if (!tab) continue;
-      tabIds.push(tab.id);
-      openedIds.push(tab.id);
-      e.restoredAt = Date.now();
-    }
-    if (key && tabIds.length) {
-      const head = list[0];
-      await attachToGroup(tabIds, windowId, head.groupTitle, head.groupColor);
-    }
+  const windowId = await resolveWindow(options.windowId);
+  const openedIds = await openEntriesInGroups(wanted, windowId, options.suspended);
+  for (const entry of wanted) {
+    if (entry.openedAt) entry.restoredAt = entry.openedAt;
+    delete entry.openedAt;
   }
 
   if (options.removeFromVault) {
@@ -134,11 +94,36 @@ export async function restoreEntries(entryIds, options = {}) {
   await saveVault(vault);
   await bumpStats({ restored: openedIds.length });
 
-  if (options.suspended) {
-    for (const id of openedIds) await discardWhenReady(id);
-  }
+  return { opened: openedIds.length, openedIds, windowId };
+}
 
-  return { opened: openedIds.length, windowId };
+export async function addVaultEntries(items) {
+  const vault = await getVault();
+  let added = 0;
+  for (const raw of items) {
+    if (!raw || !raw.url || isBlockedUrl(raw.url)) continue;
+    const entry = {
+      id: newId(),
+      url: raw.url,
+      title: raw.title || raw.url,
+      favIconUrl: raw.favIconUrl || '',
+      pinned: !!raw.pinned,
+      groupTitle: raw.groupTitle || '',
+      groupColor: raw.groupColor || '',
+      groupCollapsed: false,
+      archivedAt: Date.now(),
+      lastActive: raw.lastActive || raw.closedAt || Date.now()
+    };
+    const dup = vault.entries.find(
+      (e) => urlKey(e.url) === urlKey(entry.url) && e.groupTitle === entry.groupTitle
+    );
+    if (dup) continue;
+    vault.entries.unshift(entry);
+    added++;
+  }
+  await saveVault(vault);
+  await bumpStats({ archived: added });
+  return { added };
 }
 
 export async function moveVaultEntries(entryIds, targetKey, beforeId) {
